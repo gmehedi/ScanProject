@@ -78,3 +78,20 @@ struct Quadrilateral {
         }
     }
 }
+extension UIImage{
+    func imageByApplyingMaskingBezierPath(_ path: UIBezierPath, _ pathFrame: CGRect) -> UIImage {
+
+        UIGraphicsBeginImageContext(self.size)
+        let context = UIGraphicsGetCurrentContext()!
+
+        context.addPath(path.cgPath)
+        context.clip()
+        draw(in: CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height))
+
+        let maskedImage = UIGraphicsGetImageFromCurrentImageContext()!
+
+        UIGraphicsEndImageContext()
+
+        return maskedImage
+    }
+}

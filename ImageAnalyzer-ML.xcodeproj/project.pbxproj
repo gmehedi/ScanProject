@@ -55,6 +55,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5240C60D2519D2AA00B8A398 /* Cropper */ = {
+			isa = PBXGroup;
+			children = (
+				527CD7CB25189827005FE3F8 /* SECropView.swift */,
+				527CD7CD2518987B005FE3F8 /* CGPoint+geometry.swift */,
+				527CD7CF251898AA005FE3F8 /* SEAreaView.swift */,
+				527CD7D1251898CF005FE3F8 /* SEQuadrangleHelper.swift */,
+				527CD7D3251898F2005FE3F8 /* UIView+globalCoordinates.swift */,
+				527CD7D525189917005FE3F8 /* SECropError.swift */,
+			);
+			path = Cropper;
+			sourceTree = "<group>";
+		};
 		CABE0CCB22EAB86F0027A6C0 = {
 			isa = PBXGroup;
 			children = (
@@ -84,12 +97,7 @@
 				CABE0CE322EAB8710027A6C0 /* Info.plist */,
 				527CD7C725189774005FE3F8 /* SECornerView.swift */,
 				527CD7C9251897F8005FE3F8 /* Array+shift.swift */,
-				527CD7CB25189827005FE3F8 /* SECropView.swift */,
-				527CD7CD2518987B005FE3F8 /* CGPoint+geometry.swift */,
-				527CD7CF251898AA005FE3F8 /* SEAreaView.swift */,
-				527CD7D1251898CF005FE3F8 /* SEQuadrangleHelper.swift */,
-				527CD7D3251898F2005FE3F8 /* UIView+globalCoordinates.swift */,
-				527CD7D525189917005FE3F8 /* SECropError.swift */,
+				5240C60D2519D2AA00B8A398 /* Cropper */,
 			);
 			path = "ImageAnalyzer-ML";
 			sourceTree = "<group>";
@@ -323,13 +331,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S27FAGF43P;
 				INFOPLIST_FILE = "ImageAnalyzer-ML/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ImageAnalyzer-ML";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ImageAnalyzer-MLq";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -341,13 +349,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S27FAGF43P;
 				INFOPLIST_FILE = "ImageAnalyzer-ML/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ImageAnalyzer-ML";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ImageAnalyzer-MLq";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

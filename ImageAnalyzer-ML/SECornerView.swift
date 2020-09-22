@@ -9,7 +9,7 @@
 import UIKit
 
 class SECornerView: UIView {
-    
+    var bNum: Int!
     override init(frame: CGRect) {
         super.init(frame: frame)
         layer.cornerRadius = frame.size.width / 2.0

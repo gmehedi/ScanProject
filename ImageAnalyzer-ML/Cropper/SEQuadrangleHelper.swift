@@ -55,7 +55,7 @@ public class SEQuadrangleHelper {
         
         let orderedQuad = try orderPointsInQuadrangle(quad: quad)
         let context = CIContext(options: nil)
-        print("ordered quad: ", orderedQuad)
+        //print("ordered quad: ", orderedQuad)
         
         guard let transform = perspectiveCorrection else { throw SECropError.unknown }
         transform.setValue(CIVector(cgPoint: orderedQuad[0].cartesian(for: imgSize)),

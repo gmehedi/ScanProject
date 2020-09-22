@@ -17,9 +17,31 @@ class ViewController: UIViewController {
     var p3: CGPoint?
     var p4: CGPoint?
     
+    var qP1: CGPoint?
+    var qP2: CGPoint?
+    var qP3: CGPoint?
+    var qP4: CGPoint?
+    var resultImage: CIImage!
+    var ciImage: CIImage!
+    let cropView = SECropView()
+    var frame = [Quadrilateral]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    @IBAction func tappedOnCroppedButton(_ sender: UIButton) {
+        for (bNum, bPos) in cropView.bLDict {
+            print("B  ", bNum,"   ", bPos)
+            self.updateButtonPosition(buttonNumber: bNum, position: bPos)
+        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+//            self.resultImage = self.flattenImage(image: self.ciImage!, topLeft: self.p1!, topRight: self.p2!,bottomLeft: self.p3!, bottomRight: self.p4!)
+//            self.croppedImageView.image = UIImage.init(ciImage: self.resultImage)
+//        })
+        self.cropImage()
+    }
+    
     @IBAction func photoButtonClicked(_ sender: UIButton) {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
             presentPhotoPicker(sourceType: .photoLibrary)
@@ -43,37 +65,31 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true)
-        
+
         guard let uiImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
             fatalError("Error!")
         }
         
-        let cropView = SECropView()
         self.imageView.image = uiImage
-        //MARK: Document Scan By CIRectangleDetector
-        let image = self.performRectangleDetection(image: CIImage.init(image: uiImage)!)
-        self.croppedImageView.image = UIImage.init(ciImage: image!)
-        
-    
         let viewCordinatesSystem = analyzeImage(image: uiImage)
         //
         p1 = viewCordinatesSystem.topLeft
         p2 = viewCordinatesSystem.topRight
-        p3 = viewCordinatesSystem.bottomLeft
-        p4 = viewCordinatesSystem.bottomRight
-       // print("F  ", frame)
-        
-        let point1 = CGPoint(x: p1!.x, y: p1!.y)
-        let point2 = CGPoint(x: p2!.x, y: p2!.y)
-        let point3 = CGPoint(x: p3!.x, y: p3!.y)
-        let point4 = CGPoint(x: p4!.x, y: p4!.y)
+        print("Top POint    :    ", p1!,"    ", p2!)
+        print("POint Bottom    :    ", p3!,"    ", p4!)
+        p4 = viewCordinatesSystem.bottomLeft
+        p3 = viewCordinatesSystem.bottomRight
         
         for sub in self.imageView.subviews{
             sub.removeFromSuperview()
         }
-
-        cropView.configureWithCorners(corners: [point2, point1, point3, point4], on: self.imageView)
+        ciImage = CIImage.init(image: uiImage)
         
+     //   let frame = analyzeImage(image: uiImage)
+        cropView.configureWithCorners(corners: [viewCordinatesSystem.topRight, viewCordinatesSystem.topLeft, viewCordinatesSystem.bottomLeft, viewCordinatesSystem.bottomRight], on: self.imageView)
+        
+        
+        //print("Pos  ", p1, "  ", p2, "   ", p3, "  ", p4)
         //MARK: Add Cropper
         //self.addCropper()
         //MARK: Detect Rectangle By Vision
@@ -87,5 +103,35 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
         present(picker, animated: true)
     }
 }
+//MARK: CropperView Delegate
+extension ViewController{
+    func updateButtonPosition(buttonNumber:  Int, position: CGPoint){
+        //print("What  ", buttonNumber,"     ", position)
+        switch buttonNumber {
+        case 1:
+            p1 = position // okk
+        case 2:
+            p2 = position
+        case 3:
+            p3 = position // ok
+        default:
+            p4 = position
+        }
+    }
+}
 
+extension ViewController{
+    func cropImage(){
+        let uiImage = UIImage.init(ciImage: ciImage)
+        let testPath = UIBezierPath()
+        testPath.move(to: CGPoint(x: p1!.x, y: p1!.y)) // 3
+        testPath.addLine(to: CGPoint(x: p2!.x, y: p2!.y)) // 1
+        testPath.addLine(to: CGPoint(x: p3!.x, y: p3!.y)) // 2
+        testPath.addLine(to: CGPoint(x: p4!.x, y: p4!.y)) // 4
+        testPath.close()
+       
 
+        self.croppedImageView.image = uiImage.imageByApplyingMaskingBezierPath(testPath, self.imageView.frame)
+    }
+    
+}

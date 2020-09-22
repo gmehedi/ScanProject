@@ -33,9 +33,9 @@ extension ViewController
                 print("Error in performing Image request: \(error)")
             }
         }
-
+        
     }
-
+    
     var vnDetectionRequest : VNDetectRectanglesRequest{
         let request = VNDetectRectanglesRequest { (request,error) in
             if let error = error as NSError? {
@@ -54,7 +54,7 @@ extension ViewController
         request.maximumObservations = 0
         return request
     }
-
+    
     var vnFaceDetectionRequest : VNDetectFaceRectanglesRequest{
         let request = VNDetectFaceRectanglesRequest { (request,error) in
             if let error = error as NSError? {
@@ -72,7 +72,7 @@ extension ViewController
         }
         return request
     }
-
+    
     var vnBarCodeDetectionRequest : VNDetectBarcodesRequest{
         let request = VNDetectBarcodesRequest { (request,error) in
             if let error = error as NSError? {
@@ -88,10 +88,10 @@ extension ViewController
                 self.visualizeObservations(observations: observations,type: .Barcode)
             }
         }
-
+        
         return request
     }
-
+    
     var vnRectangleDetectionRequest : VNDetectRectanglesRequest{
         let request = VNDetectRectanglesRequest { (request,error) in
             if let error = error as NSError? {
@@ -103,17 +103,17 @@ extension ViewController
                     else {
                         return
                 }
-                print("R Observations are \(observations)")
+             //   print("R Observations are \(observations)")
                 self.visualizeObservations(observations: observations,type: .Rectangle)
             }
         }
         request.quadratureTolerance = 45
-
+        
         return request
     }
-
+    
     func visualizeObservations(observations : [VNDetectedObjectObservation],type: DetectionTypes){
-        print("VVV")
+      //  print("VVV")
         DispatchQueue.main.async {
             guard let image = self.imageView.image
                 else{
@@ -126,11 +126,11 @@ extension ViewController
             UIGraphicsBeginImageContextWithOptions(imageSize, true, 0)
             let graphicsContext = UIGraphicsGetCurrentContext()
             image.draw(in: CGRect(origin: .zero, size: imageSize))
-
+            
             graphicsContext?.saveGState()
             graphicsContext?.setLineJoin(.round)
             graphicsContext?.setLineWidth(0.0)
-
+            
             switch type
             {
             case .Face:
@@ -142,26 +142,26 @@ extension ViewController
             case .Rectangle:
                 graphicsContext?.setFillColor(red: 0, green: 0, blue: 1, alpha: 0.4)
                 graphicsContext?.setStrokeColor(UIColor.blue.cgColor)
-
+                
             }
-
-
+            
+            
             observations.forEach { (observation) in
                 let observationBounds = observation.boundingBox.applying(imageTransform)
                 let tt = observation.self
-                print("Frame  ", tt)
+         //       print("Frame  ", tt)
                 graphicsContext?.addRect(observationBounds)
-
-                print("Observing Box  ", observationBounds)
+                
+            //    print("Observing Box  ", observationBounds)
                 self.cropToBounds(image: image, width: Double(observationBounds.size.width), height: Double(observationBounds.size.height), x: observationBounds.origin.x, y: observationBounds.origin.y)
             }
             graphicsContext?.drawPath(using: CGPathDrawingMode.fillStroke)
             graphicsContext?.restoreGState()
-
+            
             let drawnImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
             self.imageView.image = drawnImage
-
+            
         }
     }
 }
@@ -169,22 +169,22 @@ extension ViewController
 
 extension ViewController{
     func cropToBounds(image: UIImage, width: Double, height: Double, x: CGFloat, y: CGFloat) -> UIImage {
-
+        
         let cgimage = image.cgImage!
         let contextImage: UIImage = UIImage(cgImage: cgimage)
         var cgwidth: CGFloat = CGFloat(width)
         var cgheight: CGFloat = CGFloat(height)
         let rect: CGRect = CGRect(x: x, y: y, width: cgwidth, height: cgheight)
-
+        
         // Create bitmap image from context using the rect
         let imageRef: CGImage = cgimage.cropping(to: rect)!
-
+        
         // Create a new image based on the imageRef and rotate back to the original orientation
         let image: UIImage = UIImage(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
         self.croppedImageView.image = image
         return image
     }
-
+    
 }
 
 
@@ -195,13 +195,13 @@ extension ViewController{
         let transform = CGAffineTransform.identity
             .translatedBy(x: properties.xOffset, y: properties.yOffset)
             .scaledBy(x: properties.size.width, y: properties.size.height)
-
+        
         // Convert normalized coordinates to display coordinates
         let convertedTopLeft = rectangle.topLeft.applying(transform)
         let convertedTopRight = rectangle.topRight.applying(transform)
         let convertedBottomLeft = rectangle.bottomLeft.applying(transform)
         let convertedBottomRight = rectangle.bottomRight.applying(transform)
-
+        
         // Calculate bounds of bounding box
         let minX = min(convertedTopLeft.x, convertedTopRight.x, convertedBottomLeft.x, convertedBottomRight.x)
         let maxX = max(convertedTopLeft.x, convertedTopRight.x, convertedBottomLeft.x, convertedBottomRight.x)
@@ -212,38 +212,113 @@ extension ViewController{
     }
 }
 
-//Next task is here
+////Next task is here
+//extension ViewController{
+//
+//    func performRectangleDetection(image: CIImage) -> CIImage? {
+//        var resultImage: CIImage?
+//        let uiImage = UIImage.init(ciImage: image)
+//        resultImage = image
+//        let context = CIContext(options: nil)
+//        let detector = CIDetector(ofType: CIDetectorTypeRectangle, context: context, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh] )! // CIDetectorAspectRatio: 1.6, CIDetectorMaxFeatureCount: 10
+//
+//        // Get the detections
+//        var halfPerimiterValue = 0.0 as Float;
+//        let features = detector.features(in: image)
+//        UIGraphicsBeginImageContext(image.extent.size)
+//        let currentContext = UIGraphicsGetCurrentContext()
+//
+//        print("feature \(features.count)")
+//        for feature in features as! [CIRectangleFeature] {
+//            p1 = feature.topLeft
+//            p2 = feature.topRight
+//            p3 = feature.bottomLeft
+//            p4 = feature.bottomRight
+//
+//            //            let topLeft =  currentContext!.convertToUserSpace(feature.topLeft)
+//            //            let topRight = currentContext!.convertToUserSpace(feature.topRight)
+//            //            let bottomRight = currentContext!.convertToUserSpace(feature.bottomRight)
+//            //            let bottomLeft = currentContext!.convertToUserSpace(feature.bottomLeft)
+//
+//            //            qP1 = CGPoint(x: topLeft.x, y: uiImage.size.height - topLeft.y)
+//            //            qP2 = CGPoint(x: topRight.x, y: uiImage.size.height - topRight.y)
+//            //            qP3 = CGPoint(x: bottomLeft.x, y: uiImage.size.height - bottomLeft.y)
+//            //            qP4 = CGPoint(x: bottomRight.x, y: uiImage.size.height - bottomRight.y)
+//
+//            //            let height = hypotf(Float(qP3!.x - qP4!.x), Float(qP3!.y - qP4!.y))
+//            //            let width = hypotf(Float(p1!.x - p2!.x), Float(p1!.y - p2!.y))
+//
+//            //            let currentHalfPerimiterValue = height + width
+//            //            if (halfPerimiterValue < currentHalfPerimiterValue){
+//            //                halfPerimiterValue = currentHalfPerimiterValue
+//            //            }
+//        }
+//        let topLeft =  currentContext!.convertToUserSpace(p1!)
+//        let topRight = currentContext!.convertToUserSpace(p2!)
+//        let bottomLeft = currentContext!.convertToUserSpace(p3!)
+//        let bottomRight = currentContext!.convertToUserSpace(p4!)
+//
+//        qP1 = CGPoint(x: topLeft.x, y: uiImage.size.height - topLeft.y)
+//        qP2 = CGPoint(x: topRight.x, y: uiImage.size.height - topRight.y)
+//        qP3 = CGPoint(x: bottomLeft.x, y: uiImage.size.height - bottomLeft.y)
+//        qP4 = CGPoint(x: bottomRight.x, y: uiImage.size.height - bottomRight.y)
+////        let height = hypotf(Float(qP3!.x - qP4!.x), Float(qP3!.y - qP4!.y))
+////        let width = hypotf(Float(qP1!.x - qP2!.x), Float(qP1!.y - qP2!.y))
+//
+//        resultImage = flattenImage(image: image, topLeft: p1!, topRight: p2!,bottomLeft: p3!, bottomRight: p4!)
+//
+//        UIGraphicsEndImageContext()
+//
+//        return resultImage
+//    }
+//}
+
+
 extension ViewController{
-
-    func performRectangleDetection(image: CIImage) -> CIImage? {
-        var resultImage: CIImage?
-        resultImage = image
-        let detector = CIDetector(ofType: CIDetectorTypeRectangle, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh, CIDetectorAspectRatio: 1.6, CIDetectorMaxFeatureCount: 10] )!
-
-        // Get the detections
-        var halfPerimiterValue = 0.0 as Float;
-        let features = detector.features(in: image)
-        print("feature \(features.count)")
-        for feature in features as! [CIRectangleFeature] {
-            p1 = feature.topLeft
-            p2 = feature.topRight
-            let width = hypotf(Float(p1!.x - p2!.x), Float(p1!.y - p2!.y));
-            p3 = feature.bottomLeft
-            p4 = feature.bottomRight
-            let height = hypotf(Float(p3!.x - p4!.x), Float(p3!.y - p4!.y));
-            let currentHalfPerimiterValue = height+width;
-            if (halfPerimiterValue < currentHalfPerimiterValue){
-                halfPerimiterValue = currentHalfPerimiterValue
+    func analyzeImage(image: UIImage) -> Quadrilateral
+    {
+        guard let ciImage = CIImage.init(image: image)
+            else { return Quadrilateral(topLeft: CGPoint.zero, topRight: CGPoint.zero, bottomLeft: CGPoint.zero, bottomRight: CGPoint.zero) }
+        let flip = true // set to false to prevent flipping the coordinates
+        
+        let context = CIContext(options: nil)
+        
+        let detector = CIDetector(ofType: CIDetectorTypeRectangle, context: context, options: [CIDetectorAccuracy:CIDetectorAccuracyHigh])
+        
+        let features = detector!.features(in: ciImage)
+        
+        UIGraphicsBeginImageContext(ciImage.extent.size)
+        let currentContext = UIGraphicsGetCurrentContext()
+        
+        var frames: [Quadrilateral] = []
+        for feature in features as! [CIRectangleFeature]
+        {
+            
+            var topLeft = currentContext!.convertToUserSpace(feature.topLeft)
+            var topRight = currentContext!.convertToUserSpace(feature.topRight)
+            var bottomRight = currentContext!.convertToUserSpace(feature.bottomRight)
+            var bottomLeft = currentContext!.convertToUserSpace(feature.bottomLeft)
+            
+            if flip {
+                
+                p1 = feature.topLeft
+                p4 = feature.topRight
+                p2 = feature.bottomLeft
+                p3 = feature.bottomRight
+                
+                topLeft = CGPoint(x: topLeft.x, y: image.size.height - topLeft.y)
+                topRight = CGPoint(x: topRight.x, y: image.size.height - topRight.y)
+                bottomLeft = CGPoint(x: bottomLeft.x, y: image.size.height - bottomLeft.y)
+                bottomRight = CGPoint(x: bottomRight.x, y: image.size.height - bottomRight.y)
             }
+            
+            let frame = Quadrilateral(topLeft: topLeft, topRight: topRight, bottomLeft: bottomLeft, bottomRight: bottomRight)
+            
+            frames.append(frame)
         }
-        resultImage = flattenImage(image: image, topLeft: p1!, topRight: p2!, bottomLeft: p3!, bottomRight: p4!)
-        // print("perimmeter   \(halfPerimiterValue)")
-        print("TopLeft  ",p1, "   : TopRight  ",p2)
-        print("BottomLeft  ", p3,"  :  BottomRight   ", p4)
-
-        return resultImage
+        UIGraphicsEndImageContext()
+        return frames[0]
     }
-    
     func flattenImage(image: CIImage, topLeft: CGPoint, topRight: CGPoint,bottomLeft: CGPoint, bottomRight: CGPoint) -> CIImage {
         
         return image.applyingFilter("CIPerspectiveCorrection", parameters: [
@@ -255,54 +330,5 @@ extension ViewController{
             
             
         ])
-    }
-}
-
-
-extension ViewController{
-    func analyzeImage(image: UIImage) -> Quadrilateral
-    {
-        guard let ciImage = CIImage.init(image: image)
-            else { return Quadrilateral(topLeft: CGPoint.zero, topRight: CGPoint.zero, bottomLeft: CGPoint.zero, bottomRight: CGPoint.zero) }
-        let flip = true // set to false to prevent flipping the coordinates
-
-        let context = CIContext(options: nil)
-
-        let detector = CIDetector(ofType: CIDetectorTypeRectangle, context: context, options: [CIDetectorAccuracy:CIDetectorAccuracyHigh])
-
-        let features = detector!.features(in: ciImage)
-
-        UIGraphicsBeginImageContext(ciImage.extent.size)
-        let currentContext = UIGraphicsGetCurrentContext()
-
-        var frames: [Quadrilateral] = []
-        for feature in features as! [CIRectangleFeature]
-        {
-            
-            var topLeft = currentContext!.convertToUserSpace(feature.topLeft)
-            var topRight = currentContext!.convertToUserSpace(feature.topRight)
-            var bottomRight = currentContext!.convertToUserSpace(feature.bottomRight)
-            var bottomLeft = currentContext!.convertToUserSpace(feature.bottomLeft)
-
-            if flip {
-                
-                p1 = feature.topLeft
-                p2 = feature.topRight
-                p3 = feature.bottomLeft
-                p4 = feature.bottomRight
-                
-                topLeft = CGPoint(x: topLeft.x, y: image.size.height - topLeft.y)
-                topRight = CGPoint(x: topRight.x, y: image.size.height - topRight.y)
-                bottomLeft = CGPoint(x: bottomLeft.x, y: image.size.height - bottomLeft.y)
-                bottomRight = CGPoint(x: bottomRight.x, y: image.size.height - bottomRight.y)
-            }
-
-            let frame = Quadrilateral(topLeft: topLeft, topRight: topRight, bottomLeft: bottomLeft, bottomRight: bottomRight)
-
-            frames.append(frame)
-        }
-        
-        UIGraphicsEndImageContext()
-        return frames[0]
     }
 }
